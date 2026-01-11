@@ -24,11 +24,19 @@
 
 Using a dedicated Python microservice, the system generates vector embeddings for your search queries in real-time. This allows users to search for "Software Engineer" and find results for "Backend Developer" or "Fullstack Programmer" thanks to semantic similarity search powered by `sqlite-vec`.
 
+<div align="center">
+  <img width="800" alt="JobScraper - Page" src="https://github.com/user-attachments/assets/a59febec-595c-4225-aa23-615b0fe06cdb" />
+</div>
+
 ## ✨ Key Features
 
 ### 🧠 Semantic AI Search
 Don't worry about exact keywords. Type what you are looking for, and our **Vector Search Engine** will find the most contextually similar offers.
 * *Powered by `sentence-transformers` & `sqlite-vec` for high-performance local vector similarity.*
+
+<div align="center">
+  <img width="800" alt="JobScraper - Job Offers" src="https://github.com/user-attachments/assets/fcdfd011-e306-4931-9ef3-5ce295b58d83" />
+</div>
 
 ### 🔍 Smart Filtering & Pagination
 We prioritize user experience with intuitive controls:
@@ -36,14 +44,24 @@ We prioritize user experience with intuitive controls:
 * **Navigation:** Browse through hundreds of offers using navigation buttons.
 * **Custom Limits:** You decide how many offers to see per page using the dropdown selector.
 
+<div align="center">
+  <img width="800" alt="JobScraper - Filtering and Pagination" src="https://github.com/user-attachments/assets/223162bb-d071-4b84-8009-d7f83cd820ea" />
+</div>
+
 ### 📊 Rich Job Details
-Each card provides essential information at a glance, displaying all available details:
+Each card provides essential insights at a glance, with a detailed view available on click (displaying all provided data):
 * 🛠️ **Tech Stack & Skills:** Instantly see required technologies alongside nice-to-have skills.
 * 📍 **Location & Mode:** Check if the offer is Remote, Hybrid, or On-site.
 * 💰 **Salary & Contract:** View salary ranges (Net/Gross) and contract types (B2B/UoP).
+* 📝 **Full Description:** Click to expand the card and read the complete requirements and responsibilities.
 * 🔗 **Direct Application:** One-click redirection to the original offer page.
 
+<div align="center">
+  <img width="500" alt="JobScraper - Job Offer Details" src="https://github.com/user-attachments/assets/f138e477-ed41-4933-8af4-f2bed6a35459" />
+</div>
+
 ---
+
 
 ## 🏗️ How It Works (Architecture)
 
