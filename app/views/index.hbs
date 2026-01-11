@@ -1,0 +1,828 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JobScraper — Oferty</title>
+  <style>
+    :root{
+      --blue:#3b82f6;
+      --blueDark:#2563eb;
+      --bg:#f3f6fb;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --border:#e2e8f0;
+      --shadow: 0 10px 30px rgba(15, 23, 42, .08);
+      --radius: 14px;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      color:var(--text);
+      background: var(--bg);
+    }
+
+    /* TOP NAV */
+    .topbar{
+      background:#fff;
+      border-bottom:1px solid var(--border);
+      padding: 14px 22px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px;
+      font-weight:800;
+      letter-spacing:.2px;
+    }
+    .brand .dot{
+      width:10px;height:10px;border-radius:999px;background:var(--blue);
+      box-shadow: 0 0 0 4px rgba(59,130,246,.15);
+    }
+    .navlinks{
+      display:flex; gap:18px;
+      color:var(--muted);
+      font-weight:600;
+      font-size:14px;
+    }
+    .navlinks a{ color:inherit; text-decoration:none; padding:8px 10px; border-radius:10px; }
+    .navlinks a:hover{ background:#f1f5f9; color:var(--text); }
+
+    /* HERO */
+    .hero{
+      background: linear-gradient(90deg, var(--blue), #5aa6ff);
+      color:#fff;
+      padding: 64px 22px 56px;
+    }
+    .hero-inner{
+      max-width:1100px;
+      margin:0 auto;
+    }
+    .hero h1{
+      margin:0 0 10px;
+      font-size:46px;
+      line-height:1.05;
+      letter-spacing:-.8px;
+    }
+    .hero p{
+      margin:0 0 26px;
+      opacity:.9;
+      font-size:16px;
+      max-width:760px;
+    }
+
+    .searchbar{
+      display:grid;
+      grid-template-columns: 1.2fr 1fr auto;
+      gap:12px;
+      align-items:center;
+      background: rgba(255,255,255,.12);
+      padding:14px;
+      border-radius: 18px;
+      backdrop-filter: blur(4px);
+    }
+    .input{
+      width:100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border:1px solid rgba(255,255,255,.35);
+      background: rgba(255,255,255,.16);
+      color:#fff;
+      outline:none;
+      font-size:14px;
+    }
+    .input::placeholder{ color: rgba(255,255,255,.75); }
+    .btn{
+      border:0;
+      cursor:pointer;
+      padding: 12px 18px;
+      border-radius: 12px;
+      font-weight:800;
+      background:#fff;
+      color: var(--blueDark);
+      transition:.15s transform, .15s opacity;
+    }
+    .btn:hover{ transform: translateY(-1px); opacity:.95; }
+    .btn:active{ transform: translateY(0px); opacity:.9; }
+
+    /* CONTENT */
+    .container{
+      max-width:1100px;
+      margin: 22px auto;
+      padding: 0 22px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:18px;
+    }
+
+    .panel{
+      background: var(--card);
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    /* FILTERS */
+    .filters{
+      padding: 16px;
+      height: fit-content;
+    }
+    .filters h3{
+      margin:0 0 12px;
+      font-size:16px;
+      letter-spacing:-.2px;
+    }
+    .field{
+      margin: 12px 0;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+    .label{
+      font-size:12px;
+      color: var(--muted);
+      font-weight:700;
+    }
+    select, .text{
+      padding: 10px 12px;
+      border-radius: 12px;
+      border:1px solid var(--border);
+      outline:none;
+      font-size:14px;
+      background:#fff;
+    }
+    .row{
+      display:flex;
+      gap:10px;
+      margin-top: 12px;
+    }
+    .ghost{
+      background:#f1f5f9;
+      color: var(--text);
+      font-weight:800;
+      border:1px solid var(--border);
+    }
+
+    /* LIST HEADER */
+    .list-header{
+      padding: 14px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      border-bottom:1px solid var(--border);
+    }
+    .list-header h3{
+      margin:0;
+      font-size:16px;
+      letter-spacing:-.2px;
+    }
+    .count{
+      color: var(--muted);
+      font-size:13px;
+      font-weight:700;
+    }
+
+    /* SCROLLABLE LIST */
+    .list{
+      padding: 12px;
+    }
+
+    /* scrollbar */
+    .list::-webkit-scrollbar{ width: 5px; }
+    .list::-webkit-scrollbar-track{ background: #eef2ff; border-radius: 999px; }
+    .list::-webkit-scrollbar-thumb{ background: #60a5fa; border-radius: 999px; }
+    .list::-webkit-scrollbar-thumb:hover{ background:#6089fa; }
+
+    /* CARD */
+    .job{
+      background: #fff;
+      border:1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px 14px 12px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, .06);
+      display:grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .job h4{
+      margin:0;
+      color: var(--blueDark);
+      font-size:16px;
+      letter-spacing:-.2px;
+    }
+    .meta{
+      display:flex; flex-wrap:wrap; gap:10px;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size:13px;
+      font-weight:600;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(59,130,246,.1);
+      color: var(--blueDark);
+      font-weight:800;
+      font-size:12px;
+      margin-top: 10px;
+      width: fit-content;
+    }
+    .actions{
+      display:flex;
+      flex-direction:column;
+      align-items:flex-end;
+      justify-content:end;
+      gap:10px;
+    }
+    .save{
+      width:34px; height:34px;
+      border-radius: 12px;
+      border:1px solid var(--border);
+      background:#fff;
+      cursor:pointer;
+      font-size:18px;
+      line-height:32px;
+    }
+    .save.active{ background:#eff6ff; border-color:#bfdbfe; }
+    .details{
+      padding: 10px 14px;
+      border-radius: 12px;
+      border:1px solid var(--border);
+      background:#fff;
+      cursor:pointer;
+      font-weight:800;
+    }
+    .details:hover{ border-color:#bfdbfe; background:#eff6ff; }
+
+    /* MODAL */
+    .modal-backdrop{
+      position:fixed;
+      inset:0;
+      background: rgba(2,6,23,.55);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding: 20px;
+      z-index: 1000;
+    }
+    .modal{
+      width:min(720px, 100%);
+      background:#fff;
+      border-radius: 18px;
+      box-shadow: 0 30px 80px rgba(0,0,0,.25);
+      border:1px solid var(--border);
+      overflow:auto;
+      height: 90%;
+    }
+    .modal-head{
+      padding: 16px 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      border-bottom:1px solid var(--border);
+    }
+    .modal-head h3{ margin:0; font-size:18px; }
+    .x{
+      border:0;
+      background:#f1f5f9;
+      width:36px;height:36px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-size:18px;
+      font-weight:900;
+    }
+    .modal-body{
+      padding: 16px 18px 18px;
+      display:grid;
+      gap:14px;
+    }
+    .chips{ display:flex; gap:8px; flex-wrap:wrap; }
+    .chip{
+      padding: 6px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:#fff;
+      font-size:12px;
+      font-weight:800;
+      color: var(--muted);
+    }
+    .grid2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    .kv{
+      border:1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      background:#fbfdff;
+    }
+    .kv .k{ color: var(--muted); font-size:12px; font-weight:800; margin-bottom:6px; }
+    .kv .v{ font-weight:900; }
+    .section-title{
+      margin:0;
+      font-size:0.9rem;
+      color: var(--muted);
+      font-weight:900;
+      text-transform: uppercase;
+      letter-spacing:.6px;
+    }
+    .modal-foot{
+      padding: 14px 18px;
+      border-top:1px solid var(--border);
+      display:flex;
+      justify-content:flex-end;
+      gap:10px;
+    }
+    .primary{
+      background: var(--blue);
+      color:#fff;
+      font-weight:900;
+      border:0;
+      padding: 12px 16px;
+      border-radius: 12px;
+      cursor:pointer;
+    }
+    .primary:hover{ background: var(--blueDark); }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px){
+      .container{ grid-template-columns: 1fr; }
+      .filters{ position: static; }
+      .searchbar{ grid-template-columns: 1fr; }
+      .grid2{ grid-template-columns: 1fr; }
+      .hero h1{ font-size:34px; }
+    }
+
+    /* Kontener na skille - elastyczne układanie */
+    .skills-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 12px 0;
+    }
+
+    /* Styl pojedynczego skilla */
+    .skill-badge {
+      background-color: #f0f7ff; 
+      color: #0056b3;           
+      border: 1px solid #d0e3ff; 
+      padding: 4px 10px;
+      border-radius: 16px;   
+      font-size: 0.75rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .skill-badge:hover {
+      background-color: #0056b3;
+      color: white;
+      border-color: #0056b3;
+    }
+  </style>
+
+  <style>
+      .pagination-container {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 20px;
+          background: white;
+          padding: 15px 25px;
+          border-radius: 50px;
+          box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+          width: fit-content;
+          margin: 0 auto;
+      }
+
+      /* Przyciski nawigacji */
+      .nav-btn {
+          background: linear-gradient(90deg, #007bff, #5aa6ff);
+          color: white;
+          border: none;
+          padding: 10px 25px;
+          border-radius: 25px;
+          cursor: pointer;
+          font-weight: bold;
+          transition: opacity 0.3s, transform 0.2s;
+      }
+
+      .nav-btn:hover:not(:disabled) {
+          opacity: 0.9;
+          transform: translateY(-1px);
+      }
+
+      .nav-btn:disabled {
+          background: #e0e0e0;
+          color: #aaa;
+          cursor: not-allowed;
+      }
+
+      /* Licznik stron */
+      .page-info {
+          color: #555;
+          font-size: 14px;
+      }
+
+      /* Wybór limitu ofert */
+      .limit-selector {
+          margin: 20px 0;
+          text-align: center;
+          color: #555;
+          font-size: 14px;
+      }
+
+      .limit-selector select {
+          padding: 5px 10px;
+          border-radius: 5px;
+          border: 1px solid #ddd;
+          margin-left: 5px;
+          outline: none;
+      }
+    </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="brand"><span class="dot"></span> JobScraper</div>
+  </div>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <h1>Znajdź swoją wymarzoną pracę {{message}}</h1>
+      <p>Nawiąż kontakt z najlepszymi pracodawcami i odkryj możliwości dopasowane do Twoich umiejętności i aspiracji!</p>
+
+      <div class="searchbar">
+        <input id="qTitle" class="input" placeholder="Stanowisko, słowa kluczowe lub firma" />
+        <input id="qLoc" class="input" placeholder="Miasto, kod pocztowy" />
+        <button id="btnSearch" class="btn">Szukaj</button>
+      </div>
+    </div>
+  </section>
+
+  <main class="container">
+    <!-- FILTERS -->
+    <aside class="panel filters">
+      <h3>Filtry</h3>
+
+      <div class="field">
+        <div class="label">Typ pracy</div>
+        <select id="fType">
+          <option value="">Dowolny</option>
+          <option value="praca zdalna">Zdalna</option>
+          <option value="praca stacjonarna">Stacjonarna</option>
+          <option value="praca hybrydowa">Hybrydowa</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <div class="label">Stack</div>
+        <select id="fStack">
+          <option value="">Dowolny</option>
+          <option value="java">Java</option>
+          <option value=".net">.NET</option>
+          <option value="python">Python</option>
+          <option value="javascript">JavaScript</option>
+          <option value="react">React</option>
+          <option value="devops">DevOps</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <div class="label">Sortuj</div>
+        <select id="sortBy">
+          <option value="timeAsc">Najnowsze</option>
+          <option value="timeDesc">Najstarsze</option>
+        </select>
+      </div>
+
+      <div class="row">
+        <button id="btnApply" class="btn ghost" style="flex:1;">Zastosuj</button>
+        <button id="btnClear" class="btn ghost" style="flex:1;">Wyczyść</button>
+      </div>
+    </aside>
+
+    <!-- LIST -->
+    <section class="panel">
+      <div class="list-header">
+        <div>
+          <h3>Lista ofert</h3>
+          <div class="count" id="countTxt">{{total}} ofert</div>
+        </div>
+      </div>
+
+      <div class="list" id="jobsList">
+        {{#each data}}
+        <div class="job" data-id="{{this.id}}">
+          <div>
+            <h4>{{this.title}}</h4>
+
+            {{#if this.skills.length}}
+              <div class="skills-list">
+                {{#each this.skills}}
+                  <span class="skill-badge">{{this}}</span>
+                {{/each}}
+              </div>
+            {{/if}}
+
+            <div class="meta">
+              <span>📍 {{this.location}}</span>
+              <span>🏢 {{this.company}}</span>
+            </div>
+            {{#if this.salary_employment}}<div class="pill">{{this.salary_employment}}</div>{{/if}}
+            {{#if this.salary_b2b}}<div class="pill">{{this.salary_b2b}}</div>{{/if}}
+            {{#if this.salary_contract}}<div class="pill">{{this.salary_contract}}</div>{{/if}}
+            {{#if this.source}}<div class="pill">{{this.source}}</div>{{/if}}
+          </div>
+          <div class="actions">
+            <button class="details" onclick="openModal({{json this}})">Szczegóły</button>
+          </div>
+        </div>
+        {{/each}}
+      </div>
+    </section>
+  </main>
+
+  <div class="pagination-container">
+      <button id="prevBtn" class="nav-btn" onclick="prevPage()">Poprzednia</button>
+      
+      <div class="page-info">
+          Strona <span id="currentPage">{{page}}</span> z <span id="totalPages">{{pages}}</span>
+      </div>
+
+      <button id="nextBtn" class="nav-btn" onclick="nextPage()">Następna</button>
+  </div>
+
+  <div class="limit-selector">
+      Pokaż na stronie:
+      <select id="limitSelect" onchange="changeLimit()">
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="20">20</option>
+          <option value="50">50</option>
+      </select>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-head">
+        <h3 id="modalTitle">Szczegóły</h3>
+        <button class="x" id="modalClose">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="chips" id="modalChips"></div>
+
+        <div class="grid2">
+          <div class="kv">
+            <div class="k">Firma</div>
+            <div class="v" id="mCompany">—</div>
+          </div>
+          <div class="kv">
+            <div class="k">Lokalizacja</div>
+            <div class="v" id="mLocation">—</div>
+          </div>
+          <div class="kv">
+            <div class="k">Stawka (B2B)</div>
+            <div class="v" id="mSalaryB2B">—</div>
+          </div>
+          <div class="kv">
+            <div class="k">Stawka (Contract)</div>
+            <div class="v" id="mSalaryContract">—</div>
+          </div>
+          <div class="kv">
+            <div class="k">Stawka (Employment)</div>
+            <div class="v" id="mSalaryEmployment">—</div>
+          </div>
+        </div>
+
+        <div>
+          <p class="section-title">Opis</p>
+          <div id="mDesc" style="margin-top:8px; color:#334155; font-weight:600; line-height:1.45;">—</div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn ghost" id="modalCancel">Zamknij</button>
+        <button class="primary" id="modalApply">Aplikuj teraz</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+
+    function nextPage() {
+      const params = new URLSearchParams(window.location.search);
+      params.set('page', (parseInt(params.get('page') || '1') + 1).toString());
+      window.location.search = params.toString();
+    }
+
+    function prevPage() {
+      const params = new URLSearchParams(window.location.search);
+      const currentPage = parseInt(params.get('page') || '1');
+     
+      if (currentPage > 1) {
+          params.set('page', (currentPage - 1).toString());
+      }
+
+      window.location.search = params.toString();
+    }
+
+    function changeLimit() {
+      const limitSelect = document.getElementById("limitSelect");
+      const selectedLimit = limitSelect.value;
+
+      const params = new URLSearchParams(window.location.search);
+      params.set('limit', selectedLimit);
+      window.location.search = params.toString();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+
+      const page = {{page}};
+      const limit = {{limit}};
+
+      const total = {{total}};
+
+      if(page <= 1) {
+          prevBtn.disabled = true;
+      } else {
+          prevBtn.disabled = false;
+      }
+
+      if(total <= page * limit) {
+          nextBtn.disabled = true;
+      } else {
+          nextBtn.disabled = false;
+      }
+
+      const limitSelect = document.getElementById("limitSelect");
+      limitSelect.value = limit;
+    });
+  </script>
+  
+  <script>
+    //  UI
+    const jobsList = document.getElementById("jobsList");
+    const countTxt = document.getElementById("countTxt");
+
+    const qTitle = document.getElementById("qTitle");
+    const qLoc = document.getElementById("qLoc");
+    const fType = document.getElementById("fType");
+    const fStack = document.getElementById("fStack");
+    const sortBy = document.getElementById("sortBy");
+
+    const btnSearch = document.getElementById("btnSearch");
+    const btnApply = document.getElementById("btnApply");
+    const btnClear = document.getElementById("btnClear");
+
+    // --- MODAL 
+    const modalBackdrop = document.getElementById("modalBackdrop");
+    const modalClose = document.getElementById("modalClose");
+    const modalCancel = document.getElementById("modalCancel");
+    const modalApply = document.getElementById("modalApply");
+
+    const mTitle = document.getElementById("modalTitle");
+    const mCompany = document.getElementById("mCompany");
+    const mLocation = document.getElementById("mLocation");
+    const mSalaryB2B = document.getElementById("mSalaryB2B");
+    const mSalaryContract = document.getElementById("mSalaryContract");
+    const mSalaryEmployment = document.getElementById("mSalaryEmployment");
+    const mDesc = document.getElementById("mDesc");
+    const modalChips = document.getElementById("modalChips");
+
+    let saved = new Set();
+    let currentModalJob = null;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+
+      if (urlParams.has('search')) {
+          qTitle.value = urlParams.get('search');
+      }
+      
+      if (urlParams.has('location')) {
+          qLoc.value = urlParams.get('location');
+      }
+
+      if (urlParams.has('type')) {
+          fType.value = urlParams.get('type');
+      }
+
+      if (urlParams.has('skills')) {
+          fStack.value = urlParams.get('skills');
+      }
+
+      if (urlParams.has('sortOrder')) {
+          const order = urlParams.get('sortOrder');
+          sortBy.value = (order === "asc") ? "timeAsc" : "timeDesc";
+      }
+    });
+
+    function normalize(s){ return (s || "").toString().toLowerCase().trim(); }
+
+    function applyFilters(){
+      const titleQuery = normalize(qTitle.value);
+      const locQuery = normalize(qLoc.value);
+      const typeVal = normalize(fType.value);
+      const stackVal = normalize(fStack.value);
+      
+      const params = new URLSearchParams(window.location.search);
+
+      params.set('search', titleQuery);
+      params.set('location', locQuery);
+      params.set('type', typeVal);
+      params.set('skills', stackVal);
+      params.set('sortBy', "last_seen_at");
+      params.set('sortOrder', "timeAsc" === sortBy.value ? "asc" : "desc");
+
+      window.location.search = params.toString();
+    }
+
+    function openModal(job){
+      currentModalJob = job;
+
+      mTitle.textContent = job.title;
+      mCompany.textContent = job.company;
+      mLocation.textContent = job.location;
+
+      mSalaryB2B.textContent = job.salary_b2b ? job.salary_b2b : "Brak danych.";
+      mSalaryContract.textContent = job.salary_contract ? job.salary_contract : "Brak danych.";
+      mSalaryEmployment.textContent = job.salary_employment ? job.salary_employment : "Brak danych.";
+
+      mDesc.innerHTML = job.description || "Brak opisu.";
+
+      mDesc.querySelectorAll("h1, h2, h3, h4, h5, h6").forEach(h => {
+        h.classList.add("section-title");
+      });
+
+      modalChips.innerHTML = "";
+      const chip1 = document.createElement("span");
+      chip1.className = "chip";
+      chip1.textContent = job.source || "Nieznane źródło";
+      modalChips.appendChild(chip1);
+
+      job.skills.forEach(s => {
+        const c = document.createElement("span");
+        c.className = "chip";
+        c.textContent = s;
+        modalChips.appendChild(c);
+      });
+
+      modalBackdrop.style.display = "flex";
+      modalBackdrop.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeModal(){
+      modalBackdrop.style.display = "none";
+      modalBackdrop.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+      currentModalJob = null;
+    }
+
+    // Close modal by clicking outside
+    modalBackdrop.addEventListener("click", (e) => {
+      if (e.target === modalBackdrop) closeModal();
+    });
+    modalClose.addEventListener("click", closeModal);
+    modalCancel.addEventListener("click", closeModal);
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeModal();
+    });
+
+    modalApply.addEventListener("click", () => {
+      if (!currentModalJob) return;
+      window.open(currentModalJob.url, "_blank");
+    });
+
+    // buttons
+    btnSearch.addEventListener("click", applyFilters);
+    btnApply.addEventListener("click", applyFilters);
+    btnClear.addEventListener("click", () => {
+      const currParams = new URLSearchParams(window.location.search);
+
+      currParams.delete("sortOrder");
+      currParams.delete("type");
+      currParams.delete("skills");
+
+      window.location.search = currParams.toString();
+    });
+
+    // Enter key
+    [qTitle, qLoc].forEach(inp => inp.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") applyFilters();
+    }));
+  </script>
+</body>
+</html>

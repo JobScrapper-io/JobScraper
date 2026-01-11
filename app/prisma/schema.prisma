@@ -1,0 +1,36 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "./generated"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model goose_db_version {
+  id         Int       @id @default(autoincrement())
+  version_id Int
+  is_applied Int
+  tstamp     DateTime? @default(now())
+}
+
+model JobOffer {
+  id                String @id
+  title             String
+  company           String?
+  location          String?
+  description       String?
+  url               String    @unique(map: "sqlite_autoindex_job_offers_2")
+  source            String
+  published_at      DateTime?
+  skills            String?
+  created_at        DateTime? @default(now())
+  last_seen_at      DateTime? @default(now())
+  salary_employment String?
+  salary_b2b        String?
+  salary_contract   String?
+  embedding         Bytes?
+
+  @@map("job_offers")
+}

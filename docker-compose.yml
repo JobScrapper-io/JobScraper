@@ -1,0 +1,14 @@
+services:
+  ai-service:
+    build: ai-service/
+    ports:
+      - "8000:8000"
+  app:
+    build: app/
+    depends_on:
+      - ai-service
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=file:./db/jobs.db
+      - AI_SERVICE_URL=http://ai-service:8000
