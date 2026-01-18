@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>JobScraper — Oferty</title>
+  <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
   <style>
     :root{
       --blue:#3b82f6;
@@ -362,7 +363,7 @@
       .hero h1{ font-size:34px; }
     }
 
-    /* Kontener na skille - elastyczne układanie */
+    /* SKILLS BADGES */
     .skills-list {
       display: flex;
       flex-wrap: wrap;
@@ -370,7 +371,6 @@
       margin: 12px 0;
     }
 
-    /* Styl pojedynczego skilla */
     .skill-badge {
       background-color: #f0f7ff; 
       color: #0056b3;           
@@ -426,13 +426,12 @@
           cursor: not-allowed;
       }
 
-      /* Licznik stron */
+      
       .page-info {
           color: #555;
           font-size: 14px;
       }
 
-      /* Wybór limitu ofert */
       .limit-selector {
           margin: 20px 0;
           text-align: center;
@@ -484,16 +483,8 @@
       </div>
 
       <div class="field">
-        <div class="label">Stack</div>
-        <select id="fStack">
-          <option value="">Dowolny</option>
-          <option value="java">Java</option>
-          <option value=".net">.NET</option>
-          <option value="python">Python</option>
-          <option value="javascript">JavaScript</option>
-          <option value="react">React</option>
-          <option value="devops">DevOps</option>
-        </select>
+        <div class="label">Wybierz technologie</div>
+        <select id="select-tech" multiple placeholder="Wyszukaj lub wybierz z listy"></select>
       </div>
 
       <div class="field">
@@ -534,8 +525,8 @@
             {{/if}}
 
             <div class="meta">
-              <span>📍 {{this.location}}</span>
-              <span>🏢 {{this.company}}</span>
+              {{#if this.location}} <span>📍 {{this.location}}</span> {{/if}}
+              {{#if this.company}} <span>🏢 {{this.company}}</span> {{/if}}
             </div>
             {{#if this.salary_employment}}<div class="pill">{{this.salary_employment}}</div>{{/if}}
             {{#if this.salary_b2b}}<div class="pill">{{this.salary_b2b}}</div>{{/if}}
@@ -615,6 +606,91 @@
       </div>
     </div>
   </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+    
+    <script>
+        const technologies = [
+            { value: 'Java', text: 'Java', group: 'Languages' },
+            { value: 'JavaScript', text: 'JavaScript', group: 'Languages' },
+            { value: 'TypeScript', text: 'TypeScript', group: 'Languages' },
+            { value: 'Python', text: 'Python', group: 'Languages' },
+            { value: 'C#', text: 'C#', group: 'Languages' },
+            { value: 'C++', text: 'C++', group: 'Languages' },
+            { value: 'PHP', text: 'PHP', group: 'Languages' },
+            { value: 'Go', text: 'Go', group: 'Languages' },
+            { value: 'Ruby', text: 'Ruby', group: 'Languages' },
+            { value: 'Swift', text: 'Swift', group: 'Languages' },
+            { value: 'Kotlin', text: 'Kotlin', group: 'Languages' },
+            { value: 'Rust', text: 'Rust', group: 'Languages' },
+            { value: 'Scala', text: 'Scala', group: 'Languages' },
+            { value: 'Dart', text: 'Dart', group: 'Languages' },
+            { value: 'SQL', text: 'SQL', group: 'Languages' },
+
+            { value: 'React', text: 'React', group: 'Frontend' },
+            { value: 'Angular', text: 'Angular', group: 'Frontend' },
+            { value: 'Vue', text: 'Vue', group: 'Frontend' },
+            { value: 'Svelte', text: 'Svelte', group: 'Frontend' },
+            { value: 'Next.js', text: 'Next.js', group: 'Frontend' },
+            { value: 'HTML', text: 'HTML5', group: 'Frontend' },
+            { value: 'CSS', text: 'CSS3', group: 'Frontend' },
+            { value: 'GraphQL', text: 'GraphQL', group: 'Frontend' },
+            
+            { value: 'Spring', text: 'Spring', group: 'Backend' },
+            { value: 'Node.js', text: 'Node.js', group: 'Backend' },
+            { value: '.NET', text: '.NET Core / ASP.NET', group: 'Backend' },
+            { value: 'Django', text: 'Django', group: 'Backend' },
+            { value: 'Flask', text: 'Flask', group: 'Backend' },
+            { value: 'FastAPI', text: 'FastAPI', group: 'Backend' },
+            { value: 'Symfony,', text: 'Symfony', group: 'Backend' },
+            { value: 'Laravel', text: 'Laravel', group: 'Backend' },
+            { value: 'Ruby on Rails', text: 'Ruby on Rails', group: 'Backend' },
+            { value: 'NestJS', text: 'NestJS', group: 'Backend' },
+            { value: 'Hibernate', text: 'Hibernate', group: 'Backend' },
+
+            { value: 'Android', text: 'Android (Native)', group: 'Mobile' },
+            { value: 'iOS', text: 'iOS (Native)', group: 'Mobile' },
+            { value: 'Flutter', text: 'Flutter', group: 'Mobile' },
+            { value: 'React Native', text: 'React Native', group: 'Mobile' },
+
+            { value: 'MySQL', text: 'MySQL', group: 'Database' },
+            { value: 'MariaDB', text: 'MariaDB', group: 'Database' },
+            { value: 'PostgreSQL', text: 'PostgreSQL', group: 'Database' },
+            { value: 'MSSQL', text: 'SQL Server (MSSQL)', group: 'Database' },
+            { value: 'MongoDB', text: 'MongoDB', group: 'Database' },
+            { value: 'Redis', text: 'Redis', group: 'Database' },
+            { value: 'Oracle', text: 'Oracle', group: 'Database' },
+
+            { value: 'Docker', text: 'Docker', group: 'DevOps' },
+            { value: 'Kubernetes', text: 'Kubernetes', group: 'DevOps' },
+            { value: 'AWS', text: 'AWS', group: 'DevOps' },
+            { value: 'Azure', text: 'Azure', group: 'DevOps' },
+            { value: 'Google Cloud', text: 'Google Cloud (GCP)', group: 'DevOps' },
+            { value: 'Linux', text: 'Linux / Admin', group: 'DevOps' },
+            { value: 'Git', text: 'Git', group: 'DevOps' },
+            { value: 'GitHub', text: 'GitHub', group: 'DevOps' },
+            { value: 'GitLab', text: 'GitLab', group: 'DevOps' },
+            { value: 'CI/CD', text: 'CI/CD', group: 'DevOps' },
+        ];
+
+        const tomSelectInstance = new TomSelect("#select-tech", {
+            options: technologies, 
+            plugins: ['remove_button', 'optgroup_columns'],
+            valueField: 'value',
+            labelField: 'text',
+            optgroupField: 'group',
+            optgroups: [
+                {value: 'Languages', label: 'Languages'},
+                {value: 'Frontend', label: 'Frontend'},
+                {value: 'Backend', label: 'Backend'},
+                {value: 'Mobile', label: 'Mobile'},
+                {value: 'Database', label: 'Database'},
+                {value: 'DevOps', label: 'DevOps'}
+            ],
+            searchField: ['text'], 
+            create: false
+        });
+    </script>
 
   <script>
     const prevBtn = document.getElementById("prevBtn");
@@ -720,7 +796,8 @@
       }
 
       if (urlParams.has('skills')) {
-          fStack.value = urlParams.get('skills');
+          const selectedValues = urlParams.get('skills').split(',');
+          tomSelectInstance.setValue(selectedValues); 
       }
 
       if (urlParams.has('sortOrder')) {
@@ -735,14 +812,20 @@
       const titleQuery = normalize(qTitle.value);
       const locQuery = normalize(qLoc.value);
       const typeVal = normalize(fType.value);
-      const stackVal = normalize(fStack.value);
-      
+      const stackVal = tomSelectInstance.getValue().join(',');
+     
       const params = new URLSearchParams(window.location.search);
 
-      params.set('search', titleQuery);
-      params.set('location', locQuery);
-      params.set('type', typeVal);
-      params.set('skills', stackVal);
+      if(params.has('search')) params.delete('search');
+      if(params.has('location')) params.delete('location');
+      if(params.has('type')) params.delete('type');
+      if(params.has('skills')) params.delete('skills');
+
+      if(titleQuery) params.set('search', titleQuery);
+      if(locQuery) params.set('location', locQuery);
+      if(typeVal) params.set('type', typeVal);
+      if(stackVal) params.set('skills', stackVal);
+
       params.set('sortBy', "last_seen_at");
       params.set('sortOrder', "timeAsc" === sortBy.value ? "asc" : "desc");
 

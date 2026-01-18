@@ -77,7 +77,7 @@ export class AppController {
     const ids = await this.jobOfferService.jobOffersID(where, jobOffersParams.orderBy);
 
     const rawJobOffers = search ? 
-      await this.jobOfferService.jobOffersBySimilarity(search, ids, skip, limitInt, 0.4, sortOrder.toUpperCase() as 'ASC' | 'DESC') :
+      await this.jobOfferService.jobOffersBySimilarity(search, ids, skip, limitInt, 0.4, sortOrder === "asc" ? 'ASC' : 'DESC') :
       await this.jobOfferService.jobOffers(jobOffersParams);
 
     const jobOffersData = (rawJobOffers.data as any[]).map(offer => {
