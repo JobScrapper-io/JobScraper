@@ -1,6 +1,7 @@
 import { Controller, Get, Query, Render } from '@nestjs/common';
 import { JobOfferService } from './job_offer/job-offer.service';
 import { Prisma } from 'prisma/generated/client';
+import { getSynonyms } from './skills-synonyms';
 
 @Controller()
 export class AppController {
@@ -60,9 +61,15 @@ export class AppController {
     }
 
     if(skills) {
-      const skillConditions = skills.split(',').map(skill => ({
-        skills: { contains: `"${skill.trim()}"` } 
-      }));
+      const skillConditions = skills.split(',').map(rawSkill => {
+        const phrases = getSynonyms(rawSkill);
+
+        return {
+            OR: phrases.map(phrase => ({
+                skills: { contains: `"${phrase}"` }
+            }))
+        };
+    });
 
       whereAND.push(...skillConditions);
     }
