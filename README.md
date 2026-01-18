@@ -25,7 +25,7 @@
 Using a dedicated Python microservice, the system generates vector embeddings for your search queries in real-time. This allows users to search for "Software Engineer" and find results for "Backend Developer" or "Fullstack Programmer" thanks to semantic similarity search powered by `sqlite-vec`.
 
 <div align="center">
-  <img width="800" alt="JobScraper - Page" src="https://github.com/user-attachments/assets/a59febec-595c-4225-aa23-615b0fe06cdb" />
+  <img width="800" alt="JobScraper - Page" src="https://github.com/user-attachments/assets/c1331121-e7ac-47b0-88b0-7da78767521b" />
 </div>
 
 ## ✨ Key Features
