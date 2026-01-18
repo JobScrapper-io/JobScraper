@@ -688,7 +688,11 @@
                 {value: 'DevOps', label: 'DevOps'}
             ],
             searchField: ['text'], 
-            create: false
+            create: false,
+            onItemAdd: function() {
+              this.setTextboxValue('');
+              this.refreshOptions();
+            }
         });
     </script>
 
